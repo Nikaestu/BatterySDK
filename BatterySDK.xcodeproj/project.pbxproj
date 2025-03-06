@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		02576E592D79E9C4004F305C /* BatterySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02576E4E2D79E9C4004F305C /* BatterySDK.framework */; };
+		02576E792D79F748004F305C /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02576E782D79F748004F305C /* Package.swift */; };
+		02576E7A2D79F748004F305C /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02576E782D79F748004F305C /* Package.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,6 +25,7 @@
 /* Begin PBXFileReference section */
 		02576E4E2D79E9C4004F305C /* BatterySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BatterySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		02576E582D79E9C4004F305C /* BatterySDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BatterySDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		02576E782D79F748004F305C /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -81,6 +84,7 @@
 		02576E442D79E9C4004F305C = {
 			isa = PBXGroup;
 			children = (
+				02576E782D79F748004F305C /* Package.swift */,
 				02576E502D79E9C4004F305C /* BatterySDK */,
 				02576E5C2D79E9C4004F305C /* BatterySDKTests */,
 				02576E4F2D79E9C4004F305C /* Products */,
@@ -215,6 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02576E792D79F748004F305C /* Package.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02576E7A2D79F748004F305C /* Package.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

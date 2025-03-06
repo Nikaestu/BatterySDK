@@ -8,7 +8,7 @@
 
 1. **Ouvrir Xcode** et aller dans :  
    `File > Add Packages...`  
-2. **Entrer l'URL du repo GitHub** : 
+2. **Entrer l'URL du repo GitHub** : https://github.com/Nikaestu/BatterySDK
 3. **Sélectionner la version souhaitée** (par défaut, la plus récente).
 4. **Cliquer sur "Add Package"**.  
 
@@ -19,10 +19,12 @@
 ### 1️⃣ **Importer le SDK dans votre projet**  
 Ajoutez cette ligne dans vos fichiers Swift :  
 
-"import BatterySDK
+```swift
+import BatterySDK
 
 let batteryLevel = BatteryManager.shared.getBatteryLevel()
 print("🔋 Niveau de batterie : \(batteryLevel * 100)%")"
+```
 
 ---
 

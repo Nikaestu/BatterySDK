@@ -18,11 +18,11 @@
 
 ### 1️⃣ **Importer le SDK dans votre projet**  
 Ajoutez cette ligne dans vos fichiers Swift :  
-```swift
-import BatterySDK
+
+"import BatterySDK
 
 let batteryLevel = BatteryManager.shared.getBatteryLevel()
-print("🔋 Niveau de batterie : \(batteryLevel * 100)%")
+print("🔋 Niveau de batterie : \(batteryLevel * 100)%")"
 
 ---
 

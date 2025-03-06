@@ -1,13 +1,35 @@
-# ``BatterySDK``
+# 🔋 BatterySDK
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+**BatterySDK** est un SDK permettant de récupérer facilement le niveau de batterie d'un appareil iOS.  
 
-## Overview
+## 🚀 Installation  
 
-<!--@START_MENU_TOKEN@-->Text<!--@END_MENU_TOKEN@-->
+### 📦 Via Swift Package Manager (SPM)  
 
-## Topics
+1. **Ouvrir Xcode** et aller dans :  
+   `File > Add Packages...`  
+2. **Entrer l'URL du repo GitHub** : https://github.com/Nikaestu/BatterySDK
+3. **Sélectionner la version souhaitée** (par défaut, la plus récente).
+4. **Cliquer sur "Add Package"**.  
 
-### <!--@START_MENU_TOKEN@-->Group<!--@END_MENU_TOKEN@-->
+---
 
-- <!--@START_MENU_TOKEN@-->``Symbol``<!--@END_MENU_TOKEN@-->
+## 📖 Utilisation  
+
+### 1️⃣ **Importer le SDK dans votre projet**  
+Ajoutez cette ligne dans vos fichiers Swift :  
+
+```swift
+import BatterySDK
+
+let batteryLevel = BatteryManager.shared.getBatteryLevel()
+print("🔋 Niveau de batterie : \(batteryLevel * 100)%")"
+```
+
+---
+
+## 🔨 Compiler le projet en local
+`swift build`
+
+## 🧪 Lancer les tests unitaires
+`swift test`

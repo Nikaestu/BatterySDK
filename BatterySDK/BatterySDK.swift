@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 public class BatteryManager {
     
     public static let shared = BatteryManager()

@@ -1,0 +1,47 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "BatterySDK-x86_64-apple-macosx15.0-debug.module": ["<BatterySDK-x86_64-apple-macosx15.0-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<BatterySDK-x86_64-apple-macosx15.0-debug.module>"]
+  "test": ["<BatterySDK-x86_64-apple-macosx15.0-debug.module>"]
+default: "main"
+nodes:
+  "/Users/ippon/dev/ios/swift/projects/BatterySDK/BatterySDK/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/ippon/dev/ios/swift/projects/BatterySDK/BatterySDK/BatterySDK.swift"]
+    outputs: ["/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/sources"]
+    description: "Write auxiliary file /Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/sources"
+
+  "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "<BatterySDK-x86_64-apple-macosx15.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK.swift.o","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/Modules/BatterySDK.swiftmodule"]
+    outputs: ["<BatterySDK-x86_64-apple-macosx15.0-debug.module>"]
+
+  "C.BatterySDK-x86_64-apple-macosx15.0-debug.module":
+    tool: shell
+    inputs: ["/Users/ippon/dev/ios/swift/projects/BatterySDK/BatterySDK/BatterySDK.swift","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/sources"]
+    outputs: ["/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK.swift.o","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/Modules/BatterySDK.swiftmodule"]
+    description: "Compiling Swift Module 'BatterySDK' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","BatterySDK","-emit-dependencies","-emit-module","-emit-module-path","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/Modules/BatterySDK.swiftmodule","-output-file-map","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/sources","-I","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/Modules","-target","x86_64-apple-macosx10.13","-enable-batch-mode","-index-store-path","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/index/store","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-module-cache-path","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK-Swift.h","-color-diagnostics","-swift-version","6","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","batterysdk"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/ippon/dev/ios/swift/projects/BatterySDK/BatterySDK/","/Users/ippon/dev/ios/swift/projects/BatterySDK/Package.swift","/Users/ippon/dev/ios/swift/projects/BatterySDK/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

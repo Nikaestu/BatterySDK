@@ -5,7 +5,7 @@
 //  Created by Dylan Le Hir on 3/6/25.
 //
 
-// swift-tools-version:6.0.0
+// swift-tools-version:5.7.0
 import PackageDescription
 
 let package = Package(

@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/master.swiftdeps"
+  },
+  "/Users/ippon/dev/ios/swift/projects/BatterySDK/BatterySDK/BatterySDK.swift": {
+    "dependencies": "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK.d",
+    "object": "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK.swift.o",
+    "swiftmodule": "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK~partial.swiftmodule",
+    "swift-dependencies": "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK.swiftdeps"
+  }
+}

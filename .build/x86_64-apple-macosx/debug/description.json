@@ -1,0 +1,211 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.BatterySDK-x86_64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/sources",
+      "importPath" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/BatterySDK/BatterySDK.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "BatterySDK",
+      "moduleOutputPath" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/Modules/BatterySDK.swiftmodule",
+      "objects" : [
+        "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-apple-macosx10.13",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK-Swift.h",
+        "-color-diagnostics",
+        "-swift-version",
+        "6",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "batterysdk"
+      ],
+      "outputFileMapPath" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/Modules/BatterySDK.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/ippon/dev/ios/swift/projects/BatterySDK/BatterySDK/BatterySDK.swift"
+      ],
+      "tempsPath" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "BatterySDK" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "BatterySDK",
+      "-package-name",
+      "batterysdk",
+      "-incremental",
+      "-c",
+      "/Users/ippon/dev/ios/swift/projects/BatterySDK/BatterySDK/BatterySDK.swift",
+      "-I",
+      "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/Modules",
+      "-target",
+      "x86_64-apple-macosx10.13",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK-Swift.h",
+      "-color-diagnostics",
+      "-swift-version",
+      "6",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "batterysdk",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "BatterySDK" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "writeCommands" : {
+    "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/BatterySDK/BatterySDK.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/sources"
+    },
+    "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

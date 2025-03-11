@@ -16,7 +16,7 @@ import NIO
 @MainActor
 public class BatteryManager {
     
-    func basicConfiguration(host: String, port: Int) {
+    public func basicConfiguration(host: String, port: Int) {
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let exporterChannel = ClientConnection.insecure(group: group)
             .connect(host: host, port: port)

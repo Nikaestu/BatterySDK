@@ -36,9 +36,9 @@ public class BatteryManager {
         OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
 
         // creating a new meter & instrument
-        let meter = meterProvider.meterBuilder(name: "battery-monitor").build()
+        let meter = meterProvider.meterBuilder(name: "batteryMonitor").build()
 
-        var gaugeBuilder = meter.gaugeBuilder(name: "Gauge")
+        var gaugeBuilder = meter.gaugeBuilder(name: "BatteryLevel")
 
         // observable gauge
         var observableGauge = gaugeBuilder.buildWithCallback { ObservableDoubleMeasurement in

@@ -22,8 +22,6 @@ public class BatteryManager {
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let exporterChannel = ClientConnection.insecure(group: group)
             .connect(host: host, port: port)
-
-        print("avant")
         let meterProvider = StableMeterProviderBuilder()
             .registerView(
                 selector: InstrumentSelector.builder().setInstrument(name: ".*").build(),
@@ -37,31 +35,30 @@ public class BatteryManager {
         OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
 
         let meter = meterProvider.meterBuilder(name: "battery-monitor").build()
-        print("après")
-        
+
         // Activer la surveillance de la batterie
         UIDevice.current.isBatteryMonitoringEnabled = true
 
         // Créer une métrique observable pour le niveau de batterie
-        _ = meter.gaugeBuilder(name: "device.battery_level")
-            .buildWithCallback { observer in
-                let batteryLevel = UIDevice.current.batteryLevel * 100
-                print("Battery Level Callback Executed: \(batteryLevel)") // ✅ Vérification
-                if batteryLevel >= 0 {
-                    print("avant le record")
-                    observer.record(value: Double(batteryLevel))
-                    print("après le record")
-                } else {
-                    print("❌ Valeur de batteryLevel invalide : \(batteryLevel)")
-                }
-            }
+//        _ = meter.gaugeBuilder(name: "device.battery_level")
+//            .buildWithCallback { observer in
+//                let batteryLevel = UIDevice.current.batteryLevel * 100
+//                print("Battery Level Callback Executed: \(batteryLevel)") // ✅ Vérification
+//                if batteryLevel >= 0 {
+//                    print("avant le record")
+//                    observer.record(value: Double(batteryLevel))
+//                    print("après le record")
+//                } else {
+//                    print("❌ Valeur de batteryLevel invalide : \(batteryLevel)")
+//                }
+//            }
         
-        // Ajouter un délai pour tester le comportement du callback
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            print("Callback triggered après délai")
-            let batteryLevel = UIDevice.current.batteryLevel * 100
-            print("Battery Level: \(batteryLevel)") // Vérifier la valeur de la batterie ici
-        }
+        _ = meter.counterBuilder(name: "device.test_counter")
+            .buildWithCallback { observer in
+                let testValue = 1 // Une valeur simple pour tester
+                print("Test Counter Callback Executed: \(testValue)")
+                observer.record(value: testValue)
+            }
         
         print("Toutes les étapes de la configuration sont terminées ! 🎉🚴")
     }

@@ -16,16 +16,10 @@ import NIO
 @MainActor
 public class BatteryManager {
     
-    public static let shared = BatteryManager()
-
-    private init() {
-        basicConfiguration()
-    }
-    
-    func basicConfiguration() {
+    func basicConfiguration(host: String, port: Int) {
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let exporterChannel = ClientConnection.insecure(group: group)
-            .connect(host: "otel-collector", port: 4317)
+            .connect(host: host, port: port)
 
         let meterProvider = StableMeterProviderBuilder()
             .registerView(

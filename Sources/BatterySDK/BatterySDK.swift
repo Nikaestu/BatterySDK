@@ -23,6 +23,7 @@ public class BatteryManager {
         let exporterChannel = ClientConnection.insecure(group: group)
             .connect(host: host, port: port)
 
+        print("avant")
         let meterProvider = StableMeterProviderBuilder()
             .registerView(
                 selector: InstrumentSelector.builder().setInstrument(name: ".*").build(),
@@ -36,7 +37,8 @@ public class BatteryManager {
         OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
 
         let meter = meterProvider.meterBuilder(name: "battery-monitor").build()
-
+        print("après")
+        
         // Activer la surveillance de la batterie
         UIDevice.current.isBatteryMonitoringEnabled = true
 

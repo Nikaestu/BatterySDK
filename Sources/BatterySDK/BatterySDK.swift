@@ -25,7 +25,7 @@ public class BatteryManager {
             .connect(host: host, port: port)
         let meterProvider = StableMeterProviderBuilder()
             .registerView(
-                selector: InstrumentSelector.builder().setInstrument(name: ".*").build(),
+                selector: InstrumentSelector.builder().setInstrument(name: "Gauge").build(),
                 view: StableView.builder().build()
             )
             .registerMetricReader(
@@ -38,7 +38,7 @@ public class BatteryManager {
         // creating a new meter & instrument
         let meter = meterProvider.meterBuilder(name: "battery-monitor").build()
 
-        var gaugeBuilder = meter.gaugeBuilder(name: "batteryLevel")
+        var gaugeBuilder = meter.gaugeBuilder(name: "Gauge")
 
         // observable gauge
         var observableGauge = gaugeBuilder.buildWithCallback { ObservableDoubleMeasurement in

@@ -41,11 +41,11 @@ public class BatteryManager {
         UIDevice.current.isBatteryMonitoringEnabled = true
 
         // Créer une métrique observable pour le niveau de batterie
-        _ = meter.gaugeBuilder(name: "device.battery_level")
-            .buildWithCallback { observer in
-                let batteryLevel = UIDevice.current.batteryLevel * 100
-                observer.record(value: Double(batteryLevel))
-            }
+//        _ = meter.gaugeBuilder(name: "device.battery_level")
+//            .buildWithCallback { observer in
+//                let batteryLevel = UIDevice.current.batteryLevel * 100
+//                observer.record(value: Double(batteryLevel))
+//            }
         
         print("Toutes les étapes de la configuration sont terminées ! 🎉🚴")
     }

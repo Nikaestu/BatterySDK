@@ -8,36 +8,49 @@
 import UIKit
 import Foundation
 import OpenTelemetryApi
-import OpenTelemetrySdk  
+import OpenTelemetrySdk
 import OpenTelemetryProtocolExporterGrpc
+import GRPC
+import NIO
 
 @MainActor
 public class BatteryManager {
     
     public static let shared = BatteryManager()
 
-    private let meterProvider: StableMeterProviderSdk
-    private let meter: Meter
-    private let batteryLevelMetric: ObservableDoubleGauge
-
     private init() {
-        UIDevice.current.isBatteryMonitoringEnabled = true
-        configure()
-
+        basicConfiguration()
     }
+    
+    func basicConfiguration() {
+        let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+        let exporterChannel = ClientConnection.insecure(group: group)
+            .connect(host: "otel-collector", port: 4317)
 
-    func configure() {
+        let meterProvider = StableMeterProviderBuilder()
+            .registerView(
+                selector: InstrumentSelector.builder().setInstrument(name: ".*").build(),
+                view: StableView.builder().build()
+            )
+            .registerMetricReader(
+                reader: StablePeriodicMetricReaderBuilder(exporter: StableOtlpMetricExporter(channel: exporterChannel)).build()
+            )
+            .build()
+
+        OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
+
+        let meter = meterProvider.meterBuilder(name: "battery-monitor").build()
+
+        // Activer la surveillance de la batterie
+        UIDevice.current.isBatteryMonitoringEnabled = true
+
+        // Créer une métrique observable pour le niveau de batterie
+        _ = meter.gaugeBuilder(name: "device.battery_level")
+            .buildWithCallback { observer in
+                let batteryLevel = UIDevice.current.batteryLevel * 100
+                observer.record(value: Double(batteryLevel))
+            }
         
-      Client
-        
-      let configuration = ClientConnection.Configuration.default(target: .hostAndPort("localhost", 4317),
-                                                                 eventLoopGroup: MultiThreadedEventLoopGroup(numberOfThreads: 1))
-      let client = ClientConnection(configuration: configuration)
-
-      let resource = Resource(attributes: ["service.name": "StableMetricExample"]).merge(other: resource())
-
-      OpenTelemetry.registerMeterProvider(meterProvider: StableMeterProviderSdk.builder().
-        registerMetricReader(reader: StablePeriodicMetricReaderBuilder(exporter: StableOtlpMetricExporter(channel: client))
-          .setInterval(timeInterval: 60).build()).build())
+        print("Toutes les étapes de la configuration sont terminées ! 🎉🚴")
     }
 }

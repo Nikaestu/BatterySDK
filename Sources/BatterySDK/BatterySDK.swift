@@ -19,6 +19,7 @@ public class BatteryManager {
     public init() {}
         
     public func basicConfiguration(host: String, port: Int) {
+        UIDevice.current.isBatteryMonitoringEnabled = true
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let exporterChannel = ClientConnection.insecure(group: group)
             .connect(host: host, port: port)
@@ -34,31 +35,15 @@ public class BatteryManager {
 
         OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
 
+        // creating a new meter & instrument
         let meter = meterProvider.meterBuilder(name: "battery-monitor").build()
 
-        // Activer la surveillance de la batterie
-        UIDevice.current.isBatteryMonitoringEnabled = true
+        var gaugeBuilder = meter.gaugeBuilder(name: "batteryLevel")
 
-        // Créer une métrique observable pour le niveau de batterie
-//        _ = meter.gaugeBuilder(name: "device.battery_level")
-//            .buildWithCallback { observer in
-//                let batteryLevel = UIDevice.current.batteryLevel * 100
-//                print("Battery Level Callback Executed: \(batteryLevel)") // ✅ Vérification
-//                if batteryLevel >= 0 {
-//                    print("avant le record")
-//                    observer.record(value: Double(batteryLevel))
-//                    print("après le record")
-//                } else {
-//                    print("❌ Valeur de batteryLevel invalide : \(batteryLevel)")
-//                }
-//            }
-        
-        _ = meter.counterBuilder(name: "device.test_counter")
-            .buildWithCallback { observer in
-                let testValue = 1 // Une valeur simple pour tester
-                print("Test Counter Callback Executed: \(testValue)")
-                observer.record(value: testValue)
-            }
+        // observable gauge
+        var observableGauge = gaugeBuilder.buildWithCallback { ObservableDoubleMeasurement in
+          ObservableDoubleMeasurement.record(value: 1.0, attributes: ["test": AttributeValue.bool(true)])
+        }
         
         print("Toutes les étapes de la configuration sont terminées ! 🎉🚴")
     }

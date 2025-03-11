@@ -56,6 +56,13 @@ public class BatteryManager {
                 }
             }
         
+        // Ajouter un délai pour tester le comportement du callback
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            print("Callback triggered après délai")
+            let batteryLevel = UIDevice.current.batteryLevel * 100
+            print("Battery Level: \(batteryLevel)") // Vérifier la valeur de la batterie ici
+        }
+        
         print("Toutes les étapes de la configuration sont terminées ! 🎉🚴")
     }
 }

@@ -24,23 +24,30 @@ public class BatteryManager {
         let exporterChannel = ClientConnection.insecure(group: group)
             .connect(host: host, port: port)
         let meterProvider = StableMeterProviderBuilder()
+            // Indique quel type de données est utilisé (Gauge, countrer, etc...)
+            // On documente la métrique avec un titre, une description et une version
+            // Ca facilitera la lecture vers Prometheus ou Grafana
             .registerView(
-                selector: InstrumentSelector.builder().setInstrument(name: "Gauge").build(),
-                view: StableView.builder().build()
+                selector: InstrumentSelector.builder().setInstrument(name: "Gauge").setMeter(version: "1").build(),
+                view: StableView.builder().withName(name: "Niveau de batterie de l'iPhone").withDescription(description: "On récupère le niveau de la batterie afin de suivre son évolution").build()
             )
+            // Crée un lecteur périodique qui récupère et envoie les métriques
+            // Configuration du OTLP qui envoie ici les données vers otel-collector via gRPC
             .registerMetricReader(
                 reader: StablePeriodicMetricReaderBuilder(exporter: StableOtlpMetricExporter(channel: exporterChannel)).build()
             )
             .build()
 
+        // Enregistre le meter
         OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
         
-        // creating a new meter & instrument
+        // On utilise le meterProvider pour crée un meter
         let meter = meterProvider.meterBuilder(name: "MeterBatteryMonitoring").build()
 
+        // On crée une gauge ou "jauge" en fr
         var gaugeBuilder = meter.gaugeBuilder(name: "BatteryLevelGauge")
         
-        // observable gauge
+        // On observe la gauge
         var observableGauge = gaugeBuilder.buildWithCallback { ObservableDoubleMeasurement in
             print("Début de la méthode observableGauge")
             ObservableDoubleMeasurement.record(value: 1.0, attributes: ["test": AttributeValue.bool(true)])

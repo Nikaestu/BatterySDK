@@ -47,13 +47,13 @@ public class BatteryManager {
         let meter = meterProvider.meterBuilder(name: "MeterBatteryMonitoring").build()
 
         // On crée une gauge ou "jauge" en fr
-        var gaugeBuilder = meter.gaugeBuilder(name: "BatteryLevelGauge")
+        let gaugeBuilder = meter.gaugeBuilder(name: "BatteryLevelGauge")
         
         // On observe la gauge
         
-        observableGauge = gaugeBuilder.buildWithCallback { ObservableDoubleMeasurement in
+        observableGauge = gaugeBuilder.buildWithCallback { observableDoubleMeasurement in
             print("Début de la méthode observableGauge")
-            ObservableDoubleMeasurement.record(value: 1.0, attributes: ["test": AttributeValue.bool(true)])
+            //ObservableDoubleMeasurement.record(value: 1.0, attributes: ["test": AttributeValue.bool(true)])
             print("Fin de la méthode observableGauge")
         }
         

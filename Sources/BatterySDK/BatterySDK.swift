@@ -16,6 +16,8 @@ import NIO
 @MainActor
 public class BatteryManager {
     
+    private var observableGauge: ObservableDoubleGauge?
+    
     public init() {}
         
     public func basicConfiguration(host: String, port: Int) {
@@ -48,7 +50,8 @@ public class BatteryManager {
         var gaugeBuilder = meter.gaugeBuilder(name: "BatteryLevelGauge")
         
         // On observe la gauge
-        var observableGauge = gaugeBuilder.buildWithCallback { ObservableDoubleMeasurement in
+        
+        observableGauge = gaugeBuilder.buildWithCallback { ObservableDoubleMeasurement in
             print("Début de la méthode observableGauge")
             ObservableDoubleMeasurement.record(value: 1.0, attributes: ["test": AttributeValue.bool(true)])
             print("Fin de la méthode observableGauge")

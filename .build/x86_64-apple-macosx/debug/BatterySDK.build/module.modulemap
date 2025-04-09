@@ -1,4 +1,0 @@
-module BatterySDK {
-    header "/Users/ippon/dev/ios/swift/projects/BatterySDK/.build/x86_64-apple-macosx/debug/BatterySDK.build/BatterySDK-Swift.h"
-    requires objc
-}

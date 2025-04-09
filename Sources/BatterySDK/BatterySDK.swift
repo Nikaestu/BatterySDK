@@ -7,7 +7,7 @@
 
 import UIKit
 import Foundation
-import OpenTelemetryApi
+@preconcurrency import OpenTelemetryApi
 import OpenTelemetrySdk
 import OpenTelemetryProtocolExporterGrpc
 import GRPC
@@ -15,123 +15,100 @@ import NIO
 
 @MainActor
 public class BatteryManager {
-//    private var timer: Timer?
-//
-    public init() {
-        print("Init de BatteryManager")
+    // MARK: - Private properties
+    
+    private var doubleGaugeObservable: ObservableDoubleGauge?
+    
+    // MARK: - Public properties
+    
+    /// The default instance of BatteryManager
+    public static let instance = BatteryManager()
+    
+    // MARK: - Private methods
+    
+    private init() {
         UIDevice.current.isBatteryMonitoringEnabled = true
-        print("Battery monitoring enabled")
     }
-//
-//    public func startMonitoring() {
-//        print("🔄 Démarrage du monitoring de la batterie")
-//        timer?.invalidate()
-//        timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { [weak self] _ in
-//            Task { @MainActor in
-//                self?.sendBatteryLevel()
-//            }
-//        }
-//        sendBatteryLevel() // Envoi immédiat de la première mesure
-//    }
-//
-//    private func sendBatteryLevel() {
-//        let batteryLevel = UIDevice.current.batteryLevel * 100 // Conversion en pourcentage
-//        print("📡 Envoi métrique: BatteryLevel -> \(batteryLevel)%")
-//
-//        let url = URL(string: "http://192.168.1.227:4318/v1/metrics")!
-//        let json: [String: Any] = [
-//            "resourceMetrics": [
-//                [
-//                    "resource": [
-//                        "attributes": [
-//                            ["key": "service.name", "value": ["stringValue": "battery-collector-service"]],
-//                            ["key": "device.name", "value": ["stringValue": UIDevice.current.name]],
-//                            ["key": "battery.state", "value": ["stringValue": UIDevice.current.batteryState.description]]
-//                        ]
-//                    ],
-//                    "scopeMetrics": [
-//                        [
-//                            "scope": ["name": "battery-level"],
-//                            "metrics": [
-//                                [
-//                                    "name": "batteryLevel",
-//                                    "description": "Niveau de batterie de l'iPhone",
-//                                    "gauge": [
-//                                        "dataPoints": [
-//                                            [
-//                                                "value": ["asDouble": batteryLevel],
-//                                                "timeUnixNano": "\(UInt64(Date().timeIntervalSince1970 * 1_000_000_000))",
-//                                                "attributes": [
-//                                                    ["key": "device", "value": ["stringValue": UIDevice.current.name]],
-//                                                    ["key": "battery_state", "value": ["stringValue": UIDevice.current.batteryState.description]]
-//                                                ]
-//                                            ]
-//                                        ],
-//                                        "aggregationTemporality": 2
-//                                    ]
-//                                ]
-//                            ]
-//                        ]
-//                    ]
-//                ]
-//            ]
-//        ]
-//
-//        guard let jsonData = try? JSONSerialization.data(withJSONObject: json) else {
-//            print("❌ Erreur lors de la conversion du JSON")
-//            return
-//        }
-//
-//        // Affichage du JSON pour debug
-//        if let jsonString = String(data: jsonData, encoding: .utf8) {
-//            print("📤 JSON envoyé :", jsonString)
-//        }
-//
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "POST"
-//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//        request.httpBody = jsonData
-//
-//        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-//            if let error = error {
-//                print("❌ Erreur lors de l'envoi des métriques :", error)
-//                return
-//            }
-//            if let httpResponse = response as? HTTPURLResponse {
-//                print("📤 Statut de la réponse :", httpResponse.statusCode)
-//                if let data = data {
-//                    print("📥 Réponse :", String(data: data, encoding: .utf8) ?? "Aucune réponse")
-//                }
-//            }
-//        }
-//        task.resume()
-//    }
-//}
-//
-//private extension UIDevice.BatteryState {
-//    var description: String {
-//        switch self {
-//        case .unknown: return "unknown"
-//        case .unplugged: return "unplugged"
-//        case .charging: return "charging"
-//        case .full: return "full"
-//        @unknown default: return "unknown"
-//        }
-//    }
     
-    public func basicConfiguration() {
-      let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-        // 4317: gRPC et 4318: http
-      let exporterChannel = ClientConnection.insecure(group: group)
-        .connect(host: "192.168.1.110", port: 4317)
+    // MARK: - Public methods
+    
+    /// Starts monitoring the device's battery level and records it as a gauge metric.
+    ///
+    /// This method creates a gauge metric to track the device's battery level. It uses
+    /// OpenTelemetry's meter builder to construct a gauge that periodically records the
+    /// current battery level as an observable value. The battery state and device name
+    /// are also included as attributes for the recorded measurement. The battery level
+    /// is printed to the console as a percentage.
+    ///
+    /// - Throws:
+    ///   - `MeterInstanceError`: If the meter instance cannot be created.
+    ///
+    /// - Note: This method uses `UIDevice.current` to retrieve the device's current battery
+    ///   level and state. The battery level is recorded as a percentage value.
+    public func startMonitoring() throws {
+        let meter = OpenTelemetry.instance
+            .stableMeterProvider?
+            .meterBuilder(name: .meterName)
+            .build()
+        guard let meter else { throw MeterInstanceError() }
+        
+        let gaugeBuilder = meter.gaugeBuilder(name: .gaugeName)
+        doubleGaugeObservable = gaugeBuilder.buildWithCallback { observableDoubleMeasurement in
+            let device = UIDevice.current
+            observableDoubleMeasurement.record(value: device.batteryLevel.toPercentValue,
+                                               attributes: [.device: AttributeValue.string(device.name),
+                                                            .batteryState: AttributeValue.string(device.batteryState.description)])
+            Logger.info("📡 Niveau de batterie : \(device.batteryLevel)%")
+        }
+    }
 
+    /// Configures the OpenTelemetry SDK with the specified configuration.
+    ///
+    /// This method sets up a `MultiThreadedEventLoopGroup` with one thread and creates a
+    /// `ClientConnection` to the specified host and port for exporting metrics. It then
+    /// registers a `StableMeterProvider` with a default view and a default metric reader
+    /// to export the metrics to the specified connection.
+    ///
+    /// - Parameter configuration: A `Configuration` object containing the host and port
+    ///   for the exporter connection. The default value is `Configuration(host: "192.168.1.110", port: .gRPC)`.
+    ///   - `host`: The host to which the metrics will be exported (default is `"192.168.1.110"`).
+    ///   - `port`: The port to use for the connection (default is `.gRPC`).
+    ///
+    /// This method will register the meter provider with OpenTelemetry to handle the
+    /// collection and export of metrics.
+    public func configure(_ configuration: Configuration = Configuration(host: "192.168.1.110", port: .gRPC)) {
+        let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+        let exporterChannel = ClientConnection.insecure(group: group)
+            .connect(host: configuration.host,
+                     port: configuration.port.value)
+        
         // Gauge - Counter - etc...
-      OpenTelemetry.registerStableMeterProvider(meterProvider: StableMeterProviderBuilder()
-        .registerView(selector: InstrumentSelector.builder().setInstrument(name: ".*").build(), view: StableView.builder().build())
-        .registerMetricReader(reader: StablePeriodicMetricReaderBuilder(exporter: StableOtlpMetricExporter(channel: exporterChannel)).build())
-        .build()
-      )
+        let meterProvider = StableMeterProviderBuilder()
+            .registerView(selector: InstrumentSelector.default,
+                          view: StableView.default)
+            .registerMetricReader(reader: StablePeriodicMetricReaderSdk.default(channel: exporterChannel))
+            .build()
+        
+        OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
     }
-    
+}
+
+// MARK: - Private extension
+private extension String {
+    static let meterName = "battery-monitoring"
+    static let gaugeName = "batteryLevel"
+}
+
+// MARK: - Public extension
+public extension BatteryManager {
+    struct Configuration {
+        let host: String
+        let port: Port
+        
+        public init(host: String, port: Port) {
+            self.host = host
+            self.port = port
+        }
+    }
 }
 

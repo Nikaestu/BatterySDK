@@ -5,7 +5,7 @@
 //  Created by Alexandre Faltot on 09/04/2025.
 //
 
-extension Float {
+public extension Float {
     var toPercentValue: Double {
         return Double(self * 100)
     }

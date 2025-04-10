@@ -16,8 +16,6 @@ import NIO
 @MainActor
 public class BatteryManager {
     // MARK: - Private properties
-    
-    private var doubleGaugeObservable: ObservableDoubleGauge?
     private var meter: StableMeter?
 
     // MARK: - Public properties
@@ -30,38 +28,6 @@ public class BatteryManager {
     private init() {
         UIDevice.current.isBatteryMonitoringEnabled = true
         
-    }
-    
-    // MARK: - Public methods
-    
-    /// Starts monitoring the device's battery level and records it as a gauge metric.
-    ///
-    /// This method creates a gauge metric to track the device's battery level. It uses
-    /// OpenTelemetry's meter builder to construct a gauge that periodically records the
-    /// current battery level as an observable value. The battery state and device name
-    /// are also included as attributes for the recorded measurement. The battery level
-    /// is printed to the console as a percentage.
-    ///
-    /// - Note: This method uses `UIDevice.current` to retrieve the device's current battery
-    ///   level and state. The battery level is recorded as a percentage value.
-    public func startMonitoring(opentelemetry: OpenTelemetry) throws(BatterySDKError) {
-        
-        // Create meter
-        let meter = opentelemetry
-            .stableMeterProvider?
-            .meterBuilder(name: .meterName)
-            .build()
-        
-        guard let meter else { throw .configurationMeter }
-                
-        let gaugeBuilder = meter.gaugeBuilder(name: .gaugeName)
-        doubleGaugeObservable = gaugeBuilder.buildWithCallback { observableDoubleMeasurement in
-            let device = UIDevice.current
-            observableDoubleMeasurement.record(value: device.batteryLevel.toPercentValue,
-                                               attributes: [.device: AttributeValue.string(device.name),
-                                                            .batteryState: AttributeValue.string(device.batteryState.description)])
-            Logger.info("🔋 Niveau de batterie : \(device.batteryLevel)%")
-        }
     }
 
     /// Configures the OpenTelemetry SDK with the specified configuration.
@@ -96,7 +62,7 @@ public class BatteryManager {
 }
 
 // MARK: - Private extension
-private extension String {
+public extension String {
     static let meterName = "battery-monitoring"
     static let gaugeName = "batteryLevel"
 }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension UIDevice.BatteryState {
+public extension UIDevice.BatteryState {
     var description: String {
         switch self {
         case .unknown: return "unknown"

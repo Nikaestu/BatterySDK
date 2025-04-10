@@ -44,9 +44,16 @@ public class BatteryManager {
     ///
     /// - Note: This method uses `UIDevice.current` to retrieve the device's current battery
     ///   level and state. The battery level is recorded as a percentage value.
-    public func startMonitoring() throws(BatterySDKError) {
-        guard let meter else { throw .notConfigured }
-
+    public func startMonitoring(opentelemetry: OpenTelemetry) throws(BatterySDKError) {
+        
+        // Create meter
+        let meter = opentelemetry
+            .stableMeterProvider?
+            .meterBuilder(name: .meterName)
+            .build()
+        
+        guard let meter else { throw .configurationMeter }
+                
         let gaugeBuilder = meter.gaugeBuilder(name: .gaugeName)
         doubleGaugeObservable = gaugeBuilder.buildWithCallback { observableDoubleMeasurement in
             let device = UIDevice.current
@@ -85,14 +92,6 @@ public class BatteryManager {
             .build()
         
         OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
-        
-        // Create meter
-        let meter = configuration.telemetry
-            .stableMeterProvider?
-            .meterBuilder(name: .meterName)
-            .build()
-        guard let meter else { throw .configurationMeter }
-        self.meter = meter
     }
 }
 
@@ -105,12 +104,10 @@ private extension String {
 // MARK: - Public extension
 public extension BatteryManager {
     struct Configuration {
-        let telemetry: OpenTelemetry
         let host: String
         let port: Port
         
-        public init(telemetry: OpenTelemetry, host: String, port: Port) {
-            self.telemetry = telemetry
+        public init(host: String, port: Port) {
             self.host = host
             self.port = port
         }

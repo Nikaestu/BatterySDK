@@ -17,6 +17,8 @@ import NIO
 public class BatteryManager {
     // MARK: - Private properties
     private var meter: StableMeter?
+    private var doubleGaugeObservable: ObservableDoubleGauge?
+    private var batteryInfo: (value: Double, name: String, state: String)?
 
     // MARK: - Public properties
     
@@ -27,7 +29,6 @@ public class BatteryManager {
     
     private init() {
         UIDevice.current.isBatteryMonitoringEnabled = true
-        
     }
 
     /// Configures the OpenTelemetry SDK with the specified configuration.

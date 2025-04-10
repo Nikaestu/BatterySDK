@@ -7,7 +7,7 @@
 
 import UIKit
 import Foundation
-@preconcurrency import OpenTelemetryApi
+import OpenTelemetryApi
 import OpenTelemetrySdk
 import OpenTelemetryProtocolExporterGrpc
 import GRPC
@@ -87,7 +87,7 @@ public class BatteryManager {
         OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
         
         // Create meter
-        let meter = OpenTelemetry.instance
+        let meter = configuration.telemetry
             .stableMeterProvider?
             .meterBuilder(name: .meterName)
             .build()
@@ -105,10 +105,12 @@ private extension String {
 // MARK: - Public extension
 public extension BatteryManager {
     struct Configuration {
+        let telemetry: OpenTelemetry
         let host: String
         let port: Port
         
-        public init(host: String, port: Port) {
+        public init(telemetry: OpenTelemetry, host: String, port: Port) {
+            self.telemetry = telemetry
             self.host = host
             self.port = port
         }

@@ -13,52 +13,117 @@ import OpenTelemetryProtocolExporterGrpc
 import GRPC
 import NIO
 
-@MainActor
 public class BatteryManager {
     // MARK: - Private properties
     private var meter: StableMeter?
     private var doubleGaugeObservable: ObservableDoubleGauge?
-    private var batteryInfo: (value: Double, name: String, state: String)?
 
     // MARK: - Public properties
     
     /// The default instance of BatteryManager
-    public static let instance = BatteryManager()
+    @MainActor public static let shared = BatteryManager()
     
     // MARK: - Private methods
     
-    private init() {
-        UIDevice.current.isBatteryMonitoringEnabled = true
-    }
+    private init() {}
 
-    /// Configures the OpenTelemetry SDK with the specified configuration.
+    /// Configures the Battery SDK with the specified settings.
     ///
-    /// This method sets up a `MultiThreadedEventLoopGroup` with one thread and creates a
-    /// `ClientConnection` to the specified host and port for exporting metrics. It then
-    /// registers a `StableMeterProvider` with a default view and a default metric reader
-    /// to export the metrics to the specified connection.
+    /// This method sets up the necessary infrastructure for collecting and exporting battery metrics.
+    /// It must be called before starting ``startMonitoring()``, and should typically be invoked once during
+    /// your application's initialization phase.
     ///
-    /// - Parameter configuration: A `Configuration` object containing the host and port
-    ///   for the exporter connection. The default value is `Configuration(host: "192.168.1.110", port: .gRPC)`.
-    ///   - `host`: The host to which the metrics will be exported (default is `"192.168.1.110"`).
-    ///   - `port`: The port to use for the connection (default is `.gRPC`).
+    /// - Parameter configuration: A ``Configuration`` object containing the host and port information
+    ///   for the metrics exporter.
+    /// - Throws: ``BatterySDKError/configurationError(message:)`` if the meter couldn't be created
     ///
-    /// This method will register the meter provider with OpenTelemetry to handle the
-    /// collection and export of metrics.
-    public func configure(_ configuration: Configuration) throws(BatterySDKError) {
+    /// ### Usage Example
+    /// ```swift
+    /// let configuration = BatteryManager.Configuration(host: "example.com", port: .gRPC)
+    /// try BatteryManager.shared.configure(configuration) { OpenTelemetry.instance }
+    /// try BatteryManager.shared.startMonitoring()
+    /// ```
+    ///
+    /// After configuration is complete, you can safely call ``startMonitoring()`` to begin
+    /// recording battery metrics.
+    @MainActor public func configure(_ configuration: Configuration, _ openTelemetryInstancer: () -> OpenTelemetry) throws(BatterySDKError)  {
+        // Enable the battery monitoring
+        UIDevice.current.isBatteryMonitoringEnabled = true
+        
+        // Create the connection
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let exporterChannel = ClientConnection.insecure(group: group)
             .connect(host: configuration.host,
                      port: configuration.port.value)
         
-        // Gauge - Counter - etc...
+        // Create the meter provider
         let meterProvider = StableMeterProviderBuilder()
             .registerView(selector: InstrumentSelector.default,
                           view: StableView.default)
             .registerMetricReader(reader: StablePeriodicMetricReaderSdk.default(channel: exporterChannel))
             .build()
         
+        // Register the provider
         OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
+        
+        // Create stable meter
+        let meter = openTelemetryInstancer()
+            .stableMeterProvider?
+            .meterBuilder(name: .meterName)
+            .build()
+
+        guard let meter else { throw .configurationError(message: "Could not find stable meter provider") }
+        self.meter = meter
+    }
+    
+    /// Starts monitoring the device’s battery level and reports metrics using OpenTelemetry.
+    ///
+    /// This method initializes the necessary telemetry instruments and begins observing the battery level,
+    /// device name, and battery state. These metrics are recorded periodically and made available through
+    /// the provided OpenTelemetry instance.
+    ///
+    /// Before calling this method, ensure that your you called the ``configure(_:_:)``
+    /// method. Failing to do so will result in a ``BatterySDKError/stableMeterProviderNotFound`` error.
+    ///
+    /// - Parameter openTelemetry: An initialized instance of ``OpenTelemetry`` used for metrics reporting.
+    /// - Throws: ``BatterySDKError/monitoringError(message:)`` if the meter cannot be find due to misconfiguration.
+    ///
+    /// ### Usage Example
+    /// ```swift
+    /// let configuration = BatteryManager.Configuration(host: "example.com", port: .gRPC)
+    /// try BatteryManager.shared.configure(configuration) { OpenTelemetry.instance }
+    /// try BatteryManager.shared.startMonitoring()
+    /// ```
+    ///
+    /// After calling this method, the SDK will automatically begin collecting battery data
+    /// and sending it via OpenTelemetry’s metrics pipeline.
+    public func startMonitoring() throws(BatterySDKError) {
+        guard let meter else { throw .monitoringError(message: "Could not find stable meter provider, have you run the configure(_) method before ?") }
+        
+        // Start measure observations
+        let gaugeBuilder = meter.gaugeBuilder(name: .gaugeName)
+        doubleGaugeObservable = gaugeBuilder.buildWithCallback { [weak self] observableDoubleMeasurement in
+            // Check the battery info synchronously
+            let semaphore = DispatchSemaphore(value: 0)
+            var batteryInfo: (value: Double, name: String, state: String)?
+            Task {
+                let device = await UIDevice.current
+                let batteryValue = await device.batteryLevel.toPercentValue
+                let deviceName = await device.name
+                let batteryState = await device.batteryState.description
+                batteryInfo = (batteryValue, deviceName, batteryState)
+                semaphore.signal()
+            }
+            semaphore.wait()
+            
+            // Record the info
+            if let batteryInfo {
+                print(batteryInfo)
+                observableDoubleMeasurement.record(value: batteryInfo.value,
+                                                   attributes: [.device: AttributeValue.string(batteryInfo.name),
+                                                                .batteryState: AttributeValue.string(batteryInfo.state)])
+            }
+        }
     }
 }
 
@@ -80,4 +145,3 @@ public extension BatteryManager {
         }
     }
 }
-

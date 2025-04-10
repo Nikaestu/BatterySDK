@@ -6,6 +6,6 @@
 //
 
 public enum BatterySDKError: Error {
-    case configurationMeter
-    case notConfigured
+    case configurationError(message: String)
+    case monitoringError(message: String)
 }

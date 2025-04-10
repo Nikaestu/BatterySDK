@@ -18,7 +18,8 @@ public class BatteryManager {
     // MARK: - Private properties
     
     private var doubleGaugeObservable: ObservableDoubleGauge?
-    
+    private var meter: StableMeter?
+
     // MARK: - Public properties
     
     /// The default instance of BatteryManager
@@ -28,6 +29,7 @@ public class BatteryManager {
     
     private init() {
         UIDevice.current.isBatteryMonitoringEnabled = true
+        
     }
     
     // MARK: - Public methods
@@ -40,25 +42,18 @@ public class BatteryManager {
     /// are also included as attributes for the recorded measurement. The battery level
     /// is printed to the console as a percentage.
     ///
-    /// - Throws:
-    ///   - `MeterInstanceError`: If the meter instance cannot be created.
-    ///
     /// - Note: This method uses `UIDevice.current` to retrieve the device's current battery
     ///   level and state. The battery level is recorded as a percentage value.
-    public func startMonitoring() throws {
-        let meter = OpenTelemetry.instance
-            .stableMeterProvider?
-            .meterBuilder(name: .meterName)
-            .build()
-        guard let meter else { throw MeterInstanceError() }
-        
+    public func startMonitoring() throws(BatterySDKError) {
+        guard let meter else { throw .notConfigured }
+
         let gaugeBuilder = meter.gaugeBuilder(name: .gaugeName)
         doubleGaugeObservable = gaugeBuilder.buildWithCallback { observableDoubleMeasurement in
             let device = UIDevice.current
             observableDoubleMeasurement.record(value: device.batteryLevel.toPercentValue,
                                                attributes: [.device: AttributeValue.string(device.name),
                                                             .batteryState: AttributeValue.string(device.batteryState.description)])
-            Logger.info("📡 Niveau de batterie : \(device.batteryLevel)%")
+            Logger.info("🔋 Niveau de batterie : \(device.batteryLevel)%")
         }
     }
 
@@ -76,7 +71,7 @@ public class BatteryManager {
     ///
     /// This method will register the meter provider with OpenTelemetry to handle the
     /// collection and export of metrics.
-    public func configure(_ configuration: Configuration = Configuration(host: "192.168.1.110", port: .gRPC)) {
+    public func configure(_ configuration: Configuration) throws(BatterySDKError) {
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let exporterChannel = ClientConnection.insecure(group: group)
             .connect(host: configuration.host,
@@ -90,6 +85,14 @@ public class BatteryManager {
             .build()
         
         OpenTelemetry.registerStableMeterProvider(meterProvider: meterProvider)
+        
+        // Create meter
+        let meter = OpenTelemetry.instance
+            .stableMeterProvider?
+            .meterBuilder(name: .meterName)
+            .build()
+        guard let meter else { throw .configurationMeter }
+        self.meter = meter
     }
 }
 

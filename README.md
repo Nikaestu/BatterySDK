@@ -17,13 +17,15 @@
 ## 📖 Utilisation  
 
 ### 1️⃣ **Importer le SDK dans votre projet**  
-Ajoutez cette ligne dans vos fichiers Swift :  
+Ajoutez ces ligne à lors de l'initalisation de votre application :  
 
 ```swift
 import BatterySDK
+import OpenTelemetryApi
 
-let batteryLevel = BatteryManager.shared.getBatteryLevel()
-print("🔋 Niveau de batterie : \(batteryLevel * 100)%")"
+let configuration = BatteryManager.Configuration(host: "example.com", port: .gRPC)
+try BatteryManager.shared.configure(configuration) { OpenTelemetry.instance }
+try BatteryManager.shared.startMonitoring()
 ```
 
 ---
